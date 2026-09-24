@@ -71,4 +71,3 @@ literature-summary/     SKILL.md + agents/ + references/ + scripts/
 paper-deep-reading/     SKILL.md + agents/ + references/ + scripts/
 knowledge-sync/         SKILL.md + agents/openai.yaml
 ```
-
