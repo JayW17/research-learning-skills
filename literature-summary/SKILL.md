@@ -2,7 +2,7 @@
 name: literature-summary
 description: Generate a compact, source-grounded Chinese literature-summary note from one Zotero paper and its PDF, crop cited paper figures into summary-specific assets, and save it to an Obsidian vault. Use when the user wants a structured paper summary or literature card, not a full bilingual reader or a reviewer-style deep analysis.
 metadata:
-  version: "1.3.0"
+  version: "1.5.0"
 ---
 
 # Literature Summary
@@ -11,7 +11,7 @@ Create a reliable, reusable literature card for exactly one paper. The outcome i
 
 ## Required inputs and safe defaults
 
-The user may identify the paper with a Zotero item key, DOI, exact title, an unambiguous Zotero search query, or a local PDF path. Resolve the Obsidian vault from a user-supplied vault or note path, or from the nearest `.obsidian` ancestor of a supplied source path. If no unique vault can be identified, ask for its absolute path. Use `20_文献` as the literature root within the selected vault unless the user specifies another root.
+The user may identify the paper with a Zotero item key, DOI, exact title, an unambiguous Zotero search query, or a local PDF path. Use a default Obsidian vault only when the user or current application configuration identifies one; otherwise locate a unique workspace candidate containing `.obsidian` or ask the user for an absolute vault path. Use the vault’s existing literature root.
 
 - Do not guess a Zotero item or a PDF attachment.
 - If a Zotero search has multiple plausible papers, present a compact candidate list with title, year, creator, and item key; wait for a selection.
@@ -27,15 +27,15 @@ Treat sources in this strict order:
 
 1. The selected PDF is authoritative for the paper's claims, numbers, formulas, figures, tables, and conclusions.
 2. Zotero supplies bibliographic metadata and attachment location; resolve conflicts in paper content in favor of the PDF and flag metadata conflicts.
-3. A MinerU parse, when already supplied or available in the environment, is an optional extraction aid only. Cross-check its central claims, equations, and figure references against the PDF. If it disagrees with the PDF, correct it from the PDF and record the discrepancy in the note.
+3. A MinerU parse is an extraction aid, never independent scientific evidence. Prefer a `paper.md` whose `parse-manifest.json` matches the chosen PDF hash and whose review is verified. Cross-check central claims, equations, and figure references against the PDF. For a partial review, use only checked regions and verify the rest directly. Record material discrepancies in the note.
 4. Do not introduce outside knowledge unless the user explicitly asks for it. Mark it as 【外部】 and link or cite the source.
 
 Never promote an abstract, title, caption, OCR fragment, or MinerU output into a claim that the PDF does not support. If no PDF is available, offer a clearly marked metadata/abstract-only card; do not present it as a full-paper summary.
 
 ## Workflow
 
-1. Resolve one Zotero item and its primary PDF. Capture title, creators, venue, year, DOI/URL, item key, attachment key, and the chosen PDF path.
-2. Reuse an existing paper.md, source_map.json, source_bundle.json, or paper-card.md within the paper's target folder when they match the same Zotero item and PDF. Otherwise read enough of the full PDF to map the abstract, introduction, method, results, discussion/conclusion, main figures, main tables, and essential equations. Follow nature-reader's source-grounding, figure-crop, and equation-confidence conventions without creating an unnecessary full bilingual reader.
+1. Resolve one Zotero item and its primary PDF. Capture the paper's exact bibliographic title, creators, venue, year, DOI/URL, item key, attachment key, and the chosen PDF path. Check title discrepancies against the PDF before deciding a filename; do not derive it from a translated short label or a possibly truncated attachment filename.
+2. Search the whole literature root for the matching paper folder before selecting the output path. Reuse a matching, verified `paper.md` plus its `parse-manifest.json` and `assets/parsed/` when present; also reuse a matching source_map.json, source_bundle.json, or paper-card.md. If the matched folder uses a legacy short name, do not create a second folder or perpetuate the mismatch silently: when the user requested a naming repair, rename the folder and related notes with link updates; otherwise identify the mismatch before writing. Inspect the PDF wherever the extraction or review log is uncertain. If no bundle exists and the user asked to archive parsed full text, run `$paper-ingestion` first. A summary-only request may read the PDF with the installed MinerU skill without importing a full parse into the vault. Read enough of the full paper to map the abstract, introduction, method, results, discussion/conclusion, main figures, main tables, and essential equations. Follow nature-reader's source-grounding, figure-crop, and equation-confidence conventions without creating an unnecessary full bilingual reader.
 3. Build a compact evidence inventory before drafting: research question, gap, approach, data/setting, main results, author-stated limitations, and the figures/tables that support the important conclusions.
 4. Crop every main-paper visual that the note discusses. Make tight, individual crops; do not use full-page screenshots when a figure or table can be isolated. Store them under the note folder's `assets/summary-figures/` directory. Never write summary assets into a deep-reading asset directory. Preserve figure/table numbers and page references. Put a compact image index at the end for main figures that are not otherwise discussed.
 5. Draft the note with the summary template in references/obsidian-output.md. Use Chinese by default while preserving canonical terms, model names, variables, units, and abbreviations.
@@ -58,7 +58,7 @@ Never promote an abstract, title, caption, OCR fragment, or MinerU output into a
 
 ## Delivery layout
 
-Read references/obsidian-output.md before creating the note. The normal destination is:
+Read references/obsidian-output.md before creating the note. For a new paper folder, the normal destination is:
 
     VAULT_ROOT/20_文献/SAFE_PAPER_TITLE/总结—SAFE_PAPER_TITLE.md
 
@@ -66,7 +66,7 @@ with associated crops in:
 
     VAULT_ROOT/20_文献/SAFE_PAPER_TITLE/assets/summary-figures/
 
-Use the target title exactly for the readable heading. For Windows path components, remove invalid characters, collapse whitespace, remove trailing dots/spaces, and shorten only the filesystem-safe name when necessary. Preserve a Zotero item key in frontmatter so a shortened folder remains traceable. Honor the user's stated `20_文献` root or requested `20_文献/<direction>` root rather than silently switching to an integration-specific subfolder such as 课题组文献.
+`SAFE_PAPER_TITLE` is the exact paper title after only filesystem-required sanitization: remove Windows-invalid characters, collapse whitespace, and remove trailing dots/spaces. Use this **same basename** for the paper folder and `总结—...md`; never substitute a Chinese paraphrase for an English title or abbreviate a title merely for convenience. Append a Zotero key to both basenames only for a real collision. Shorten only when the filesystem cannot accommodate the full title, and record the exact title in frontmatter. Honor the user's stated `20_文献` root or requested `20_文献/<direction>` root rather than silently switching to an integration-specific subfolder such as 课题组文献. When the identity search finds an existing correctly named folder, write there and preserve its established direction. Before delivery, compare the folder name, note filename, frontmatter title, and Zotero/PDF title; resolve any mismatch and validate links after a rename.
 
 ## Scope boundary
 

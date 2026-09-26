@@ -23,12 +23,14 @@ If a renamed or reorganized vault makes a required destination or template ambig
 - Retain only material that will be useful beyond the immediate answer: a source locator, evidence-backed claim, clarified concept, method boundary, reproducible artifact, open question, decision rationale, or concrete next action.
 - Keep original facts, author claims, the user's interpretation, AI synthesis, and unverified hypotheses visibly distinct. Do not invent citations, page numbers, figures, data versions, experimental conditions, or results.
 - Preserve the authority of external systems specified by the vault rules. Do not copy, move, rename, or bulk-edit PDFs, raw data, code, Zotero records, or user-authored notes unless the user has explicitly authorized that exact scope.
+- For a request to archive a paper's parsed full text and figures, use `$paper-ingestion` to match the paper folder, parse with MinerU, review the extraction, and store a source bundle. Use this skill afterward only for durable research notes and links; parsed text alone is not a verified research conclusion.
 
 ## Make the smallest coherent update
 
 1. State the planned files and scope before modifying an existing note when the local rules require it.
 2. Use a currently discovered template when creating a card or note. Preserve its frontmatter and fill unknown provenance fields with an explicit pending value rather than a guess.
 3. Add source links and precise locators whenever the information came from a document, dataset, figure, code revision, or Zotero item.
+   If a matching `parse-manifest.json` and `paper.md` exist, use them for navigation and check their review status; retain the PDF/Zotero source pointer as the evidence anchor, especially for unchecked or corrected regions.
 4. Add Obsidian wikilinks only after resolving their target against the current vault; do not introduce broken links merely to make a note look connected.
 5. When the vault's current `AGENTS.md` requires it, update the dynamically located project home, current-context note, and session/change log with a concise statement of the actual change, its evidence boundary, and the next actionable step.
 
